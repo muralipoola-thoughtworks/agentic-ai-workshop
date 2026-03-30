@@ -1,6 +1,26 @@
-"""Agent tools for the retail fulfillment demo."""
-
 from __future__ import annotations
+import requests
+from langchain_core.tools import Tool
+def get_weather(city: str) -> str:
+    """Get weather for a given city using wttr.in."""
+    try:
+        url = f"https://wttr.in/{city}?format=3"
+        response = requests.get(url, timeout=5)
+        if response.status_code == 200:
+            return response.text.strip()
+        else:
+            return f"Failed to get weather: {response.status_code}"
+    except Exception as e:
+        return f"Error: {e}"
+
+def build_weather_tool():
+    return [
+        Tool(
+            name="get_weather",
+            description="Get the current weather for a given city (e.g., 'San Francisco').",
+            func=get_weather,
+        )
+    ]
 
 import json
 from pathlib import Path
