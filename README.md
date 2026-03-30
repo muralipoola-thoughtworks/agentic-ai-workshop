@@ -178,20 +178,5 @@ The tool endpoints simulate a lightweight MCP server so an agent can call tools 
 Step-by-step exercises are in the [exercises/](exercises/) folder. See [exercises/README.md](exercises/README.md) for details and mapping to workshop topics.
 
 > **Recommended Python Version:**
-> Use Python 3.11 for all workshop exercises. Python 3.10 is supported until October 2026, but 3.11 is preferred for future compatibility.
->
-> To upgrade your environment:
-> ```bash
-> # Install Python 3.11 (macOS example)
-> brew install python@3.11
-> # or with pyenv
-> pyenv install 3.11.8
->
-> # Remove old venv
-> rm -rf .venv
->
-> # Create new venv with Python 3.11
-> uv venv --python=python3.11
-> source .venv/bin/activate
-> uv pip install -r requirements.txt
-> ```
+> Use Python 3.11 for all workshop exercises. 
+
