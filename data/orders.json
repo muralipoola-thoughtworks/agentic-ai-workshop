@@ -1,0 +1,23 @@
+[
+    {
+        "order_id": "ORD-1001",
+        "status": "shipped",
+        "eta": "2026-04-02",
+        "carrier": "FastShip",
+        "tracking": "FS-123456"
+    },
+    {
+        "order_id": "ORD-1002",
+        "status": "delayed",
+        "eta": "2026-04-05",
+        "carrier": "FastShip",
+        "tracking": "FS-123789"
+    },
+    {
+        "order_id": "ORD-1003",
+        "status": "processing",
+        "eta": "2026-04-03",
+        "carrier": "Warehouse",
+        "tracking": "TBD"
+    }
+]

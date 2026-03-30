@@ -1,0 +1,13 @@
+Retail Fulfillment FAQs
+
+Q: What happens if inventory is out of stock?
+A: The order is placed on backorder and customers are notified. If restock takes longer than 7 days, support offers alternatives or cancellation.
+
+Q: How are delivery delays handled?
+A: If carrier delays exceed 48 hours, the order status changes to delayed and an escalation ticket is created for customer outreach.
+
+Q: What is the standard delivery window?
+A: Standard delivery is 3-5 business days for in-stock items.
+
+Q: When should an issue be escalated?
+A: Escalate when an order is delayed, lost, or exceeds the promised delivery window by more than 2 days.

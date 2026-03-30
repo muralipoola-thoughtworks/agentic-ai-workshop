@@ -1,0 +1,11 @@
+Escalation Playbook
+
+Escalate when:
+- Delivery is delayed more than 48 hours.
+- Inventory is out of stock and no restock within 7 days.
+- Customer requests a supervisor.
+
+Escalation process:
+1. Log ticket with order details.
+2. Notify fulfillment manager.
+3. Provide customer with next steps.

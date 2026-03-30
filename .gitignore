@@ -1,0 +1,27 @@
+# Python/venv
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# VSCode
+.vscode/
+
+# OS
+.DS_Store
+
+# Data outputs
+*.db
+*.sqlite
+*.log
+
+# Notebooks
+.ipynb_checkpoints/
+
+# uv cache
+.uv/
+
+# Misc
+.env
+.env.*

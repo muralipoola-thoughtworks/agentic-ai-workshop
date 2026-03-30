@@ -1,0 +1,20 @@
+[
+    {
+        "product_id": "SKU-ALPHA",
+        "available": "yes",
+        "stock_level": "120",
+        "location": "DC-01"
+    },
+    {
+        "product_id": "SKU-BETA",
+        "available": "no",
+        "stock_level": "0",
+        "location": "DC-02"
+    },
+    {
+        "product_id": "SKU-GAMMA",
+        "available": "low",
+        "stock_level": "8",
+        "location": "DC-01"
+    }
+]

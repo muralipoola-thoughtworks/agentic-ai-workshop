@@ -1,0 +1,3 @@
+Inventory Notes
+
+High-demand items may show "low" inventory for 24 hours before restock. Warehouse audits occur weekly.
