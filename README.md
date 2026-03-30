@@ -1,3 +1,23 @@
+## Running Exercises
+
+To avoid `ModuleNotFoundError: No module named 'core'`, always run exercise scripts from the project root directory. For example:
+
+```bash
+python exercises/01_llm_basics.py
+```
+
+Or, using the module syntax:
+
+```bash
+python -m exercises.01_llm_basics
+```
+
+If running from a subfolder, set the `PYTHONPATH` to the project root:
+
+```bash
+PYTHONPATH=. python exercises/01_llm_basics.py
+```
+
 # GenAI Workshop Demo (Retail Fulfillment)
 
 A simple, modular demo app that explains LLMs, runs a retail RAG pipeline, and showcases an agent that uses tools.
