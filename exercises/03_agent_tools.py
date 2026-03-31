@@ -84,7 +84,7 @@ if __name__ == "__main__":
     questions = [
         "What is the capital of France?",
         "What is the weather in San Francisco?",
-        "Whata is the stock price of oracle yesterday?"
+        "What is the stock price of Oracle yesterday?"
     ]
     for question in questions:
         result = agent.invoke({"input": question})
