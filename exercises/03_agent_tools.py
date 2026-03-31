@@ -11,14 +11,19 @@ Instructions:
 
 
 from langchain_community.tools.wikipedia.tool import WikipediaQueryRun
+from dotenv import load_dotenv
+import os
 from langchain_community.utilities.wikipedia import WikipediaAPIWrapper
 from langchain.agents import AgentType, initialize_agent
 from langchain_core.tools import Tool
 from core.llm_provider import LLMProvider
 import requests
+from langchain_community.tools.tavily_search import TavilySearchResults
 
 
 if __name__ == "__main__":
+    # Load environment variables from .env file
+    load_dotenv()
     # Directly create the tool and agent
     llm = LLMProvider().get_llm()
     wiki_tool = WikipediaQueryRun(api_wrapper=WikipediaAPIWrapper())
@@ -63,7 +68,10 @@ if __name__ == "__main__":
         func=get_weather,
     )
 
-    tools = [wiki_tool, weather_tool]
+    # Add Tavily web search tool to the agent's tools
+    web_search_tool = TavilySearchResults()
+
+    tools = [wiki_tool, weather_tool, web_search_tool]
     agent = initialize_agent(
         tools=tools,
         llm=llm,
@@ -76,6 +84,7 @@ if __name__ == "__main__":
     questions = [
         "What is the capital of France?",
         "What is the weather in San Francisco?",
+        "Whata is the stock price of oracle yesterday?"
     ]
     for question in questions:
         result = agent.invoke({"input": question})
