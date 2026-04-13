@@ -27,7 +27,7 @@ from pathlib import Path
 from typing import Dict, List
 
 from langchain_core.tools import StructuredTool
-from pydantic import BaseModel, Field
+from pydantic.v1 import BaseModel, Field
 
 from config import INVENTORY_DATA_PATH, ORDERS_DATA_PATH
 

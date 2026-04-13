@@ -29,36 +29,31 @@ if __name__ == "__main__":
     wiki_tool = WikipediaQueryRun(api_wrapper=WikipediaAPIWrapper())
 
     def get_weather(city: str) -> str:
-        """Get current weather for a city using Open-Meteo and Nominatim."""
-        try:
-            # Step 1: Geocode city name to lat/lon
-            geo_url = f"https://nominatim.openstreetmap.org/search"
-            geo_params = {"q": city, "format": "json", "limit": 1}
-            geo_resp = requests.get(geo_url, params=geo_params, headers={"User-Agent": "agentic-ai-demo"}, timeout=10)
-            geo_resp.raise_for_status()
-            geo_data = geo_resp.json()
-            if not geo_data:
-                return f"Could not find location for '{city}'."
-            lat = geo_data[0]["lat"]
-            lon = geo_data[0]["lon"]
+        """Get current weather for a city using OpenWeatherMap."""
+        api_key = os.getenv("OPENWEATHERMAP_API_KEY")
+        if not api_key:
+            return "Missing OPENWEATHERMAP_API_KEY in environment."
 
-            # Step 2: Query Open-Meteo for current weather
-            weather_url = "https://api.open-meteo.com/v1/forecast"
+        # Normalize city input that may include extra quotes from the agent.
+        city = city.strip().strip("\"'")
+
+        try:
+            weather_url = "https://api.openweathermap.org/data/2.5/weather"
             weather_params = {
-                "latitude": lat,
-                "longitude": lon,
-                "current_weather": "true",
+                "q": city,
+                "appid": api_key,
+                "units": "metric",
             }
             weather_resp = requests.get(weather_url, params=weather_params, timeout=10)
             weather_resp.raise_for_status()
             weather_data = weather_resp.json()
-            current = weather_data.get("current_weather")
-            if not current:
-                return f"Weather data not available for '{city}'."
-            temp = current.get("temperature")
-            wind = current.get("windspeed")
-            desc = f"Current temperature in {city}: {temp}°C, wind speed: {wind} km/h."
-            return desc
+            temp = weather_data.get("main", {}).get("temp")
+            wind = weather_data.get("wind", {}).get("speed")
+            condition = (weather_data.get("weather") or [{}])[0].get("description")
+            return (
+                f"Current temperature in {city}: {temp}°C, "
+                f"wind speed: {wind} m/s, conditions: {condition}."
+            )
         except Exception as e:
             return f"Weather lookup error for '{city}': {e}"
 
@@ -68,30 +63,39 @@ if __name__ == "__main__":
         func=get_weather,
     )
 
-    # Add Tavily web search tool to the agent's tools
-    web_search_tool = TavilySearchResults()
+    # Add Tavily web search tool with explicit usage guidance
+    _tavily_search = TavilySearchResults()
+    web_search_tool = Tool(
+        name="web_search",
+        description=(
+            "Search the web for recent or time-sensitive facts like stock prices, "
+            "news, or current events. Use for queries such as 'Oracle stock price yesterday'."
+        ),
+        func=_tavily_search.run,
+    )
 
     tools = [wiki_tool, weather_tool, web_search_tool]
     agent = initialize_agent(
         tools=tools,
         llm=llm,
         agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
-        verbose=True,
+        verbose=False,
         return_intermediate_steps=True,
+        handle_parsing_errors=True,
     )
 
     # Try both Wikipedia and weather queries
     questions = [
         "What is the capital of France?",
-        "What is the weather in San Francisco?",
-        "What is the stock price of Oracle yesterday?"
+        # "What is the weather in San Francisco?",
+        # "What is the stock price of Oracle yesterday?"
     ]
     for question in questions:
         result = agent.invoke({"input": question})
         print("\nQuestion:", question)
         print("Answer:", result.get("output", ""))
-        print("Steps:")
-        for action, observation in result.get("intermediate_steps", []):
-            print(f"- Tool: {action.tool}")
-            print(f"  Input: {action.tool_input}")
-            print(f"  Observation: {observation}")
+        # print("Steps:")
+        # for action, observation in result.get("intermediate_steps", []):
+        #     print(f"- Tool: {action.tool}")
+        #     print(f"  Input: {action.tool_input}")
+        #     print(f"  Observation: {observation}")

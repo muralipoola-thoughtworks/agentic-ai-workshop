@@ -5,7 +5,18 @@ A simple, modular demo app that explains LLMs, runs a retail RAG pipeline, and s
 
 ## Setup Pre-Requisites
 
-1. Install [uv](https://github.com/astral-sh/uv) (if not already installed):
+1. VS Code Installation
+
+We will be using `VS Code` for running these examples. 
+You can download VS Code from here
+> https://code.visualstudio.com/download
+
+2. Python Extension Installation
+
+Working with Python in Visual Studio Code, using the Microsoft Python extension, is simple, fun, and productive. Install using below link
+> https://marketplace.visualstudio.com/items?itemName=ms-python.python
+
+3. Install [uv](https://github.com/astral-sh/uv) (if not already installed):
 
 ```bash
 # Option 1: Install uv globally (recommended)
@@ -14,46 +25,55 @@ curl -Ls https://astral.sh/uv/install.sh | sh
 # pip install uv
 ```
 
-2. Create and activate a Python 3.11 virtual environment with uv:
+4. Create and activate a Python 3.11 virtual environment with uv:
 
 ```bash
-uv venv --python=python3.11
+# installs dependencies
+uv sync 
+
+# activate python environment
 source .venv/bin/activate
 ```
 
-3. Install dependencies with uv:
+5. Set your LLM credentials in `.env` file (Optional):
 
 ```bash
-uv pip install -r requirements.txt
+export OPENAI_API_KEY="your-key" # Open ai
+export AZURE_OPENAI_API_KEY="your-key" # Azure OpenAI:
+export GOOGLE_API_KEY="your-key" # Gemini:
+export WEATHER_API_KEY="your-weather-api-key" # Weather API:
 ```
 
-4. Set your LLM credentials (Optional):
-
-OpenAI:
-```bash
-export OPENAI_API_KEY="your-key"
-```
-
-Azure OpenAI:
-```bash
-export AZURE_OPENAI_API_KEY="your-key"
-```
-
-Gemini:
-```bash
-export GOOGLE_API_KEY="your-key"
-```
-
-Weather API:
-```bash
-export WEATHER_API_KEY="your-weather-api-key"
-```
-
-Update [config.py](config.py) to switch providers:
+Update [config.py](config.py) to switch providers (optional):
 ```python
 MODEL_PROVIDER = "ollama"  # "openai", "azure", or "gemini"
 ```
 
+6. Set up `.env` for local environment configuration
+
+```bash
+# copy .env.example
+cp .env.example .env
+```
+
+7. Configure `WEATHER_API_KEY`
+OpenWeather provides global weather data APIs for current conditions, forecasts, historical archives, air quality, maps, and industry-specific use cases.
+
+For `WEATHER_API_KEY`, follow below steps:
+- create an account with https://openweathermap.org/ 
+- login with your credentials
+- navigate to `My API Keys` from the profile menu
+- provide name for the key and click on `Generate` button
+- copy the key and add it to `.env` file
+
+8. Configure `TAVILY_API_KEY`
+Tavily is the real‑time search engine for AI agents and RAG workflows — Fast and secure APIs for web search and content extraction.
+
+For `TAVILY_API_KEY`, follow below steps:
+- create an account with tavily.com/home 
+- login with your credentials
+- create api key
+- copy the key and add it to `.env` file
 
 ## Ollama Setup (for Local LLM)
 
@@ -77,20 +97,17 @@ ollama pull mistral
 ollama pull nomic-embed-text
 ```
 
-## Run the API
-
-```bash
-uvicorn app:app --reload
-```
-
-API is available at http://127.0.0.1:8000
-
 ## How to Run Workshop Exercises
 
 To run any exercise in the `exercises/` folder, follow these steps:
 
 1. **Always run from the project root directory** (the folder containing `app.py`, `core/`, etc.).
   - This avoids import errors like `ModuleNotFoundError: No module named 'core'`.
+  
+  ```bash
+  # set python directory for execution
+  export PYTHONPATH=.
+  ```
 
 2. **Run an exercise script:**
   ```bash
@@ -102,15 +119,19 @@ To run any exercise in the `exercises/` folder, follow these steps:
   python -m exercises.01_llm_basics
   ```
 
-3. **If you must run from a subfolder**, set the `PYTHONPATH` to the project root:
-  ```bash
-  PYTHONPATH=. python exercises/01_llm_basics.py
-  ```
-
 4. **Troubleshooting:**
   - If you see import errors, double-check you are running from the project root.
   - Ensure your virtual environment is activated and all dependencies are installed.
   - See [exercises/README.md](exercises/README.md) for more details and exercise descriptions.
+
+
+## Run the API
+
+```bash
+uvicorn app:app --reload
+```
+
+API is available at http://127.0.0.1:8000
 
 
 ## Demo Flow
@@ -135,12 +156,6 @@ Or run the local demo script without starting the API:
 
 ```bash
 python demo.py
-```
-
-You can also use the interactive CLI menu:
-
-```bash
-python cli.py
 ```
 
 Use option 4 in the CLI menu to switch between Ollama (local), OpenAI, Azure OpenAI, and Gemini providers.
@@ -181,11 +196,3 @@ The tool endpoints simulate a lightweight MCP server so an agent can call tools 
 - Keep the default models small for fast demos.
 - All data is local and safe to modify.
 - To use local embeddings, set `EMBEDDING_PROVIDER = "ollama"` in `config.py` and ensure `OLLAMA_EMBEDDING_MODEL = "nomic-embed-text"` is set. The system will use Ollama's local embedding model for vector search (FAISS/Chroma).
-
-## Workshop Exercises
-
-Step-by-step exercises are in the [exercises/](exercises/) folder. See [exercises/README.md](exercises/README.md) for details and mapping to workshop topics.
-
-> **Recommended Python Version:**
-> Use Python 3.11 for all workshop exercises. 
-

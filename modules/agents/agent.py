@@ -44,6 +44,7 @@ class RetailAgent:
             agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
             verbose=VERBOSE_AGENT,
             return_intermediate_steps=True,
+            handle_parsing_errors=True,
         )
 
     def run(self, query: str) -> Dict[str, Any]:

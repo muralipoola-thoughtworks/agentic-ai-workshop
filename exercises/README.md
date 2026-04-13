@@ -21,6 +21,11 @@ This folder contains step-by-step exercises for the GenAI Workshop. Each exercis
 
 ## How to Run Exercises
 
+  ```bash
+  # set python directory for execution
+  export PYTHONPATH=.
+  ```
+
 - To run a single exercise:
   ```bash
   python exercises/00a_basic_prompt.py
@@ -29,10 +34,6 @@ This folder contains step-by-step exercises for the GenAI Workshop. Each exercis
 - To launch a menu and run any or all exercises interactively:
   ```bash
   python exercises/run_all_exercises.py
-  ```
-- To run any exercise with automatic handling (recommended):
-  ```bash
-  python exercises/run.py
   ```
 
 ## Mapping to Workshop Topics
@@ -49,11 +50,13 @@ This folder contains step-by-step exercises for the GenAI Workshop. Each exercis
 > Use Python 3.11 for all exercises. Python 3.12 is not supported by LangChain and Pydantic v1.
 > 
 > To create a compatible environment:
-> ```bash
-> uv venv --python=python3.11
-> source .venv/bin/activate
-> uv pip install -r requirements.txt
-> ```
+```bash
+# installs dependencies
+uv sync 
+
+# activate python environment
+source .venv/bin/activate
+```
 
 > **Note:**
 > - Exercises 00a–00d can be run directly with `python exercises/filename.py`.
@@ -63,6 +66,6 @@ This folder contains step-by-step exercises for the GenAI Workshop. Each exercis
 >   ```
 >   or:
 >   ```bash
->   PYTHONPATH=. python exercises/filename.py
+>   python exercises/filename.py
 >   ```
 

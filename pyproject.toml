@@ -1,0 +1,22 @@
+[project]
+name = "agentic-ai-workshop"
+version = "0.1.0"
+description = "agentic-ai-workshop"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "chromadb==0.4.24",
+    "faiss-cpu==1.8.0",
+    "fastapi==0.110.0",
+    "langchain==0.1.16",
+    "langchain-community==0.0.34",
+    "langchain-google-genai==1.0.1",
+    "langchain-openai==0.1.2",
+    "langchain-text-splitters==0.0.1",
+    "openai==1.14.0",
+    "pydantic==2.6.0",
+    "pypdf==4.0.0",
+    "python-dotenv>=1.2.2",
+    "uvicorn==0.29.0",
+    "wikipedia>=1.4.0",
+]
