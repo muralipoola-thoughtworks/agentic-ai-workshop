@@ -14,12 +14,12 @@ R = Restriction: Add any constraints or requirements (e.g., "Use simple language
 This helps contextualize the LLM's role and restricts output to get the required outcome.
 """
 
-from langchain_community.llms import Ollama
+from langchain_ollama import ChatOllama
 from langchain_core.messages import SystemMessage, HumanMessage
 from langchain_core.prompts import ChatPromptTemplate
 
 if __name__ == "__main__":
-    llm = Ollama(model="mistral")
+    llm = ChatOllama(model="mistral")
 
     # RRR Formula Example
     # Role: You are a helpful assistant that explains AI concepts simply.

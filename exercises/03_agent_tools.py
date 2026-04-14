@@ -12,13 +12,15 @@ Instructions:
 
 from langchain_community.tools.wikipedia.tool import WikipediaQueryRun
 from dotenv import load_dotenv
+import json
 import os
 from langchain_community.utilities.wikipedia import WikipediaAPIWrapper
-from langchain.agents import AgentType, initialize_agent
-from langchain_core.tools import Tool
+from langchain.agents import create_agent
+from langchain_core.messages import HumanMessage
+from langchain.tools import tool
 from core.llm_provider import LLMProvider
 import requests
-from langchain_community.tools.tavily_search import TavilySearchResults
+from langchain_tavily import TavilySearch
 
 
 if __name__ == "__main__":
@@ -28,14 +30,32 @@ if __name__ == "__main__":
     llm = LLMProvider().get_llm()
     wiki_tool = WikipediaQueryRun(api_wrapper=WikipediaAPIWrapper())
 
+    def _coerce_city(value) -> str:
+        if isinstance(value, dict):
+            city = value.get("city")
+            return str(city) if city is not None else str(value)
+
+        if isinstance(value, str):
+            stripped = value.strip().strip("\"'")
+            if stripped.startswith("{"):
+                try:
+                    parsed = json.loads(stripped)
+                except json.JSONDecodeError:
+                    return stripped
+                if isinstance(parsed, dict) and "city" in parsed:
+                    return str(parsed["city"])
+            return stripped
+
+        return str(value)
+
+    @tool
     def get_weather(city: str) -> str:
         """Get current weather for a city using OpenWeatherMap."""
         api_key = os.getenv("OPENWEATHERMAP_API_KEY")
         if not api_key:
             return "Missing OPENWEATHERMAP_API_KEY in environment."
 
-        # Normalize city input that may include extra quotes from the agent.
-        city = city.strip().strip("\"'")
+        city = _coerce_city(city)
 
         try:
             weather_url = "https://api.openweathermap.org/data/2.5/weather"
@@ -57,31 +77,25 @@ if __name__ == "__main__":
         except Exception as e:
             return f"Weather lookup error for '{city}': {e}"
 
-    weather_tool = Tool(
-        name="get_weather",
-        description="Get the current weather for a given city (e.g., 'San Francisco').",
-        func=get_weather,
-    )
+    @tool
+    def wikipedia_search(query: str) -> str:
+        """Search Wikipedia for a query."""
+        return wiki_tool.run(query)
 
     # Add Tavily web search tool with explicit usage guidance
-    _tavily_search = TavilySearchResults()
-    web_search_tool = Tool(
-        name="web_search",
-        description=(
-            "Search the web for recent or time-sensitive facts like stock prices, "
-            "news, or current events. Use for queries such as 'Oracle stock price yesterday'."
-        ),
-        func=_tavily_search.run,
-    )
+    _tavily_search = TavilySearch()
 
-    tools = [wiki_tool, weather_tool, web_search_tool]
-    agent = initialize_agent(
+    @tool
+    def web_search(query: str) -> str:
+        """Search the web for recent or time-sensitive facts like stock prices or news."""
+        return _tavily_search.run(query)
+
+    tools = [wikipedia_search, get_weather, web_search]
+    agent = create_agent(
+        llm,
         tools=tools,
-        llm=llm,
-        agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
-        verbose=False,
-        return_intermediate_steps=True,
-        handle_parsing_errors=True,
+        system_prompt="You are a helpful assistant that can use tools.",
+        debug=False,
     )
 
     # Try both Wikipedia and weather queries
@@ -91,11 +105,26 @@ if __name__ == "__main__":
         # "What is the stock price of Oracle yesterday?"
     ]
     for question in questions:
-        result = agent.invoke({"input": question})
         print("\nQuestion:", question)
-        print("Answer:", result.get("output", ""))
-        # print("Steps:")
-        # for action, observation in result.get("intermediate_steps", []):
-        #     print(f"- Tool: {action.tool}")
-        #     print(f"  Input: {action.tool_input}")
-        #     print(f"  Observation: {observation}")
+        # print("--- Tool Steps ---")
+        # for event in agent.stream(
+        #     {"messages": [HumanMessage(content=question)]},
+        #     stream_mode="messages",
+        # ):
+        #     if isinstance(event, tuple) and len(event) == 2:
+        #         _, payload = event
+        #     else:
+        #         payload = event
+
+        #     messages = payload.get("messages", []) if isinstance(payload, dict) else []
+        #     for message in messages:
+        #         message_type = type(message).__name__
+        #         content = getattr(message, "content", "")
+        #         if message_type in {"ToolMessage", "AIMessage"}:
+        #             print(f"{message_type}: {content}")
+
+        result = agent.invoke({"messages": [HumanMessage(content=question)]})
+        messages = result.get("messages", [])
+        answer = messages[-1].content if messages else ""
+        print("Answer:", answer)
+       

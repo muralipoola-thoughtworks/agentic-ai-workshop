@@ -4,8 +4,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from langchain_community.llms import Ollama
 from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_ollama import ChatOllama
 from langchain_openai import AzureChatOpenAI, ChatOpenAI
 
 import config as cfg
@@ -43,7 +43,7 @@ class LLMProvider:
 
         if self.provider == "ollama":
             print(f"Using Ollama: {cfg.OLLAMA_MODEL}")
-            return Ollama(model=cfg.OLLAMA_MODEL, base_url=cfg.OLLAMA_BASE_URL)
+            return ChatOllama(model=cfg.OLLAMA_MODEL, base_url=cfg.OLLAMA_BASE_URL)
 
         if self.provider == "gemini":
             print(f"Using Gemini: {cfg.GEMINI_MODEL}")

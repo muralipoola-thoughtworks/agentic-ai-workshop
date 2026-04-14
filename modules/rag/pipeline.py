@@ -4,7 +4,9 @@ from __future__ import annotations
 
 from typing import Dict, List
 
-from langchain.chains import RetrievalQA
+from langchain_classic.chains import create_retrieval_chain
+from langchain_classic.chains.combine_documents import create_stuff_documents_chain
+from langchain_core.prompts import ChatPromptTemplate
 
 from config import CHROMA_PERSIST_DIR, RETAIL_DOCS_DIR, VECTORSTORE_TYPE
 from core.embeddings import EmbeddingProvider
@@ -45,12 +47,18 @@ class RAGPipeline:
 
         llm = LLMProvider().get_llm()
         print(f"[RAGPipeline] LLM client: {type(llm).__name__}")
-        self.chain = RetrievalQA.from_chain_type(
-            llm=llm,
-            retriever=self.retriever,
-            return_source_documents=True,
+        prompt = ChatPromptTemplate.from_messages(
+            [
+                (
+                    "system",
+                    "You are a helpful assistant. Answer using the provided context.",
+                ),
+                ("human", "Question: {input}\n\nContext:\n{context}"),
+            ]
         )
-        print(f"[RAGPipeline] RetrievalQA chain initialized.")
+        qa_chain = create_stuff_documents_chain(llm, prompt)
+        self.chain = create_retrieval_chain(self.retriever, qa_chain)
+        print(f"[RAGPipeline] Retrieval chain initialized.")
 
     def query(self, question: str) -> Dict[str, List[str] | str]:
         """Run a RAG query and return answer plus sources."""
@@ -59,15 +67,15 @@ class RAGPipeline:
             self.build()
 
         print(f"[RAGPipeline] Running query: {question}")
-        result = self.chain.invoke({"query": question})
+        result = self.chain.invoke({"input": question})
         print(f"[RAGPipeline] Query complete. Raw result: {result}")
         sources = [
             doc.metadata.get("source", "unknown")
-            for doc in result.get("source_documents", [])
+            for doc in result.get("context", [])
         ]
 
         print(f"[RAGPipeline] Sources found: {sources}")
         return {
-            "answer": result.get("result", ""),
+            "answer": result.get("answer", ""),
             "sources": sources,
         }

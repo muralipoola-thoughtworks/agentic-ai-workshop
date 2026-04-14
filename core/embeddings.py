@@ -5,8 +5,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 
+from langchain_ollama import OllamaEmbeddings
 from langchain_openai import AzureOpenAIEmbeddings, OpenAIEmbeddings
-from langchain_community.embeddings import OllamaEmbeddings
 
 import config as cfg
 

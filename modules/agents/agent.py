@@ -4,7 +4,8 @@ from __future__ import annotations
 
 from typing import Any, Dict, List
 
-from langchain.agents import AgentType, initialize_agent
+from langchain_classic.agents import AgentExecutor, create_react_agent
+from langchain_core.prompts import PromptTemplate
 from langchain_core.tools import Tool
 
 from config import VERBOSE_AGENT
@@ -38,10 +39,48 @@ class RetailAgent:
     def __init__(self) -> None:
         self.llm = LLMProvider().get_llm()
         self.tools = build_tools() + [_build_rag_tool()]
-        self.executor = initialize_agent(
+        prompt = PromptTemplate.from_template(
+            """You are a helpful assistant that can use tools.
+
+    Available tools:
+    {tools}
+
+    Rules:
+    - Use this exact format for tool calls.
+    - Action must be a single tool name from [{tool_names}] on its own line.
+    - Action Input must be a JSON object on its own line.
+
+    Example:
+    Question: Where is my order ORD-1002?
+    Thought: I should look up the order status.
+    Action: get_order_status
+    Action Input: {{"order_id": "ORD-1002"}}
+    Observation: {{"order_id": "ORD-1002", "status": "delayed"}}
+    Thought: I should escalate if the order is delayed.
+    Action: escalate_issue
+    Action Input: {{"order_id": "ORD-1002"}}
+    Observation: {{"order_id": "ORD-1002", "escalated": "yes"}}
+    Thought: I now know the final answer
+    Final Answer: Your order is delayed, so I escalated it.
+
+    Now answer the real question.
+
+    Question: {input}
+    Thought: you should always think about what to do
+    Action: one of [{tool_names}]
+    Action Input: the input to the action
+    Observation: the result of the action
+    ... (repeat Thought/Action/Action Input/Observation as needed)
+    Thought: I now know the final answer
+    Final Answer: the final answer to the question
+
+    {agent_scratchpad}
+    """
+        )
+        agent = create_react_agent(llm=self.llm, tools=self.tools, prompt=prompt)
+        self.executor = AgentExecutor(
+            agent=agent,
             tools=self.tools,
-            llm=self.llm,
-            agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
             verbose=VERBOSE_AGENT,
             return_intermediate_steps=True,
             handle_parsing_errors=True,

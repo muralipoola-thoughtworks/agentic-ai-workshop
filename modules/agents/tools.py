@@ -24,12 +24,31 @@ def build_weather_tool():
 
 import json
 from pathlib import Path
-from typing import Dict, List
+from typing import Any, Dict, List
 
-from langchain_core.tools import StructuredTool
 from pydantic.v1 import BaseModel, Field
+from langchain_core.tools import StructuredTool
 
 from config import INVENTORY_DATA_PATH, ORDERS_DATA_PATH
+
+
+def _coerce_id(value: Any, key: str) -> str:
+    if isinstance(value, dict):
+        inner = value.get(key)
+        return str(inner) if inner is not None else str(value)
+
+    if isinstance(value, str):
+        stripped = value.strip()
+        if stripped.startswith("{"):
+            try:
+                parsed = json.loads(stripped)
+            except json.JSONDecodeError:
+                return value
+            if isinstance(parsed, dict) and key in parsed:
+                return str(parsed[key])
+        return value
+
+    return str(value)
 
 
 def _load_json(path: str) -> List[Dict[str, str]]:
@@ -62,6 +81,7 @@ class EscalationInput(BaseModel):
 
 def get_order_status(order_id: str) -> Dict[str, str]:
     """Return order status and ETA for a given order."""
+    order_id = _coerce_id(order_id, "order_id")
     orders = _load_json(ORDERS_DATA_PATH)
     for order in orders:
         if order.get("order_id") == order_id:
@@ -77,6 +97,7 @@ def get_order_status(order_id: str) -> Dict[str, str]:
 
 def check_inventory(product_id: str) -> Dict[str, str]:
     """Return inventory details for a product."""
+    product_id = _coerce_id(product_id, "product_id")
     inventory = _load_json(INVENTORY_DATA_PATH)
     for item in inventory:
         if item.get("product_id") == product_id:
@@ -92,6 +113,7 @@ def check_inventory(product_id: str) -> Dict[str, str]:
 
 def escalate_issue(order_id: str) -> Dict[str, str]:
     """Simulate escalation for delayed orders."""
+    order_id = _coerce_id(order_id, "order_id")
     order = get_order_status(order_id)
     if order.get("status") == "delayed":
         return {

@@ -12,12 +12,20 @@ from models.schemas import (
     RAGQueryResponse,
 )
 from modules.agents.agent import RetailAgent
+from modules.mcp.fastmcp_server import mcp_server
 from modules.mcp.server import router as mcp_router
 from modules.rag.pipeline import RAGPipeline
 
-app = FastAPI(title="GenAI Workshop Demo", version="0.1.0")
+_mcp_app = mcp_server.http_app(path="/")
+
+app = FastAPI(
+    title="GenAI Workshop Demo",
+    version="0.1.0",
+    lifespan=_mcp_app.lifespan,
+)
 
 app.include_router(mcp_router)
+app.mount("/mcp", _mcp_app)
 
 _rag_pipeline: RAGPipeline | None = None
 _agent: RetailAgent | None = None

@@ -9,11 +9,11 @@ Instructions:
 - Try changing the examples or adding new tones to see how the model adapts.
 """
 
-from langchain_community.llms import Ollama
-from langchain_core.messages import SystemMessage, HumanMessage
+from langchain_ollama import ChatOllama
+from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
 
 if __name__ == "__main__":
-    llm = Ollama(model="mistral")
+    llm = ChatOllama(model="mistral")
     system_prompt = "You are a customer support assistant. Given an email from a customer, classify their satisfaction/tone as one of: happy, sad, angry, excited, apologetic, neutral. Reply with only the tone."
     # Few-shot examples: incoming emails and their classified tone
     examples = [
@@ -28,7 +28,7 @@ if __name__ == "__main__":
     messages = [SystemMessage(content=system_prompt)]
     for email, tone in examples:
         messages.append(HumanMessage(content=email))
-        messages.append(HumanMessage(content=tone))  # Simulate assistant reply for few-shot
+        messages.append(AIMessage(content=tone))
     messages.append(HumanMessage(content=user_email))
     print("System Prompt:", system_prompt)
     print("Examples (email → tone):")

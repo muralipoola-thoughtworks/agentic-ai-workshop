@@ -168,6 +168,8 @@ The tool endpoints simulate a lightweight MCP server so an agent can call tools 
 - POST `/tools/inventory` (body: `{ "product_id": "SKU-ALPHA" }`)
 - POST `/tools/escalate` (body: `{ "order_id": "ORD-1002" }`)
 
+The FastMCP HTTP server is also available at `/mcp` (see `exercises/04_mcp_server.py` for a client example).
+
 ## Endpoints
 
 - GET `/explain` - Explain LLM vs GenAI vs Agent vs Agentic AI
