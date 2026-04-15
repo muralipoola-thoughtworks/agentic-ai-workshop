@@ -11,12 +11,28 @@ We will be using `VS Code` for running these examples.
 You can download VS Code from here
 > https://code.visualstudio.com/download
 
-2. Python Extension Installation
+2. Python Extension Installation for VS Code
 
 Working with Python in Visual Studio Code, using the Microsoft Python extension, is simple, fun, and productive. Install using below link
 > https://marketplace.visualstudio.com/items?itemName=ms-python.python
 
-3. Install [uv](https://github.com/astral-sh/uv) (if not already installed):
+3. For better experience, try installing `iTerm2` in your mac (optional)
+
+```bash
+# Install homebrew if not already available:
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+# Install `iTerm2`
+export HOMEBREW_NO_AUTO_UPDATE=1
+brew install --cask iterm2
+```
+
+```bash
+# Open `iTerm2` and install `zsh` for Themes
+brew install zsh
+```
+
+4. Install [uv](https://github.com/astral-sh/uv) (if not already installed):
 
 ```bash
 # Option 1: Install uv globally (recommended)
@@ -25,7 +41,14 @@ curl -Ls https://astral.sh/uv/install.sh | sh
 # pip install uv
 ```
 
-4. Create and activate a Python 3.11 virtual environment with uv:
+If you are having trouble with uv command or getting error `uv was installed but may not be available in the current terminal. Please restart VS Code or open a new terminal and try again`, try below commands:
+
+```bash
+echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bash_profile
+echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc
+```
+
+5. Create and activate a Python 3.11 virtual environment with uv:
 
 ```bash
 # installs dependencies
@@ -35,7 +58,7 @@ uv sync
 source .venv/bin/activate
 ```
 
-5. Set your LLM credentials in `.env` file (Optional):
+6. Set your LLM credentials in `.env` file (Optional):
 
 ```bash
 export OPENAI_API_KEY="your-key" # Open ai
@@ -49,24 +72,24 @@ Update [config.py](config.py) to switch providers (optional):
 MODEL_PROVIDER = "ollama"  # "openai", "azure", or "gemini"
 ```
 
-6. Set up `.env` for local environment configuration
+7. Set up `.env` for local environment configuration
 
 ```bash
 # copy .env.example
 cp .env.example .env
 ```
 
-7. Configure `WEATHER_API_KEY`
+8. Configure `OPENWEATHERMAP_API_KEY`
 OpenWeather provides global weather data APIs for current conditions, forecasts, historical archives, air quality, maps, and industry-specific use cases.
 
-For `WEATHER_API_KEY`, follow below steps:
+For `OPENWEATHERMAP_API_KEY`, follow below steps:
 - create an account with https://openweathermap.org/ 
 - login with your credentials
 - navigate to `My API Keys` from the profile menu
 - provide name for the key and click on `Generate` button
 - copy the key and add it to `.env` file
 
-8. Configure `TAVILY_API_KEY`
+9. Configure `TAVILY_API_KEY`
 Tavily is the real‑time search engine for AI agents and RAG workflows — Fast and secure APIs for web search and content extraction.
 
 For `TAVILY_API_KEY`, follow below steps:
