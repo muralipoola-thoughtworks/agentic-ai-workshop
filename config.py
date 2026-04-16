@@ -19,7 +19,7 @@ AZURE_OPENAI_DEPLOYMENT = "gpt-4o-mini"
 AZURE_OPENAI_ENDPOINT = "https://YOUR-RESOURCE.openai.azure.com"
 
 # Gemini settings
-GEMINI_MODEL = "gemini-1.5-flash"
+GEMINI_MODEL = "gemini-2.5-flash-lite"
 
 # Embeddings settings
 # EMBEDDING_PROVIDER can be "openai", "azure", or "ollama"
