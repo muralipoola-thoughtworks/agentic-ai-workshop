@@ -48,7 +48,17 @@ echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bash_profile
 echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc
 ```
 
-5. Create and activate a Python 3.11 virtual environment with uv:
+5. Clone github repo for the workshop
+
+```bash
+# clone github repo
+git clone https://github.com/muralipoola-thoughtworks/agentic-ai-workshop.git
+
+# navigate to the cloned directory
+cd agentic-ai-workshop
+```
+
+6. Create and activate a Python 3.11 virtual environment with uv:
 
 ```bash
 # installs dependencies
@@ -58,7 +68,7 @@ uv sync
 source .venv/bin/activate
 ```
 
-6. Set your LLM credentials in `.env` file (Optional):
+7. Set your LLM credentials in `.env` file (Optional):
 
 ```bash
 export OPENAI_API_KEY="your-key" # Open ai
@@ -72,14 +82,14 @@ Update [config.py](config.py) to switch providers (optional):
 MODEL_PROVIDER = "ollama"  # "openai", "azure", or "gemini"
 ```
 
-7. Set up `.env` for local environment configuration
+8. Set up `.env` for local environment configuration
 
 ```bash
 # copy .env.example
 cp .env.example .env
 ```
 
-8. Configure `OPENWEATHERMAP_API_KEY`
+9. Configure `OPENWEATHERMAP_API_KEY`
 OpenWeather provides global weather data APIs for current conditions, forecasts, historical archives, air quality, maps, and industry-specific use cases.
 
 For `OPENWEATHERMAP_API_KEY`, follow below steps:
@@ -89,7 +99,7 @@ For `OPENWEATHERMAP_API_KEY`, follow below steps:
 - provide name for the key and click on `Generate` button
 - copy the key and add it to `.env` file
 
-9. Configure `TAVILY_API_KEY`
+10. Configure `TAVILY_API_KEY`
 Tavily is the real‑time search engine for AI agents and RAG workflows — Fast and secure APIs for web search and content extraction.
 
 For `TAVILY_API_KEY`, follow below steps:
